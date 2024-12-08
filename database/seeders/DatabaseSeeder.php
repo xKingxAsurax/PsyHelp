@@ -2,21 +2,48 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\User;
+use App\Models\Settings;
+use App\Models\Appointment;
+use App\Models\Rating;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
+        // Crear usuarios
+        User::factory()->count(5)->create([
+            'rol' => 'psicólogo'
+        ]);
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        User::factory()->count(10)->create([
+            'rol' => 'cliente'
+        ]);
+
+        // Crear settings para cada usuario
+        User::all()->each(function ($user) {
+            Settings::create([
+                'user_id' => $user->id,
+                'notifications_enabled' => true,
+                'email_notifications' => true,
+                'sms_notifications' => true,
+                'language' => 'es',
+                'timezone' => 'America/Bogota',
+            ]);
+        });
+
+        // Crear citas
+        Appointment::factory()->count(20)->create();
+
+        // Crear calificaciones
+        Rating::factory()->count(15)->create();
+
+        // Crear roles básicos
+        \DB::table('roles')->insert([
+            ['nombre' => 'cliente'],
+            ['nombre' => 'psicólogo'],
+            ['nombre' => 'admin']
+        ]);
     }
 }
