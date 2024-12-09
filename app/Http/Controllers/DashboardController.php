@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Appointment;
 use App\Models\Patient;
 use App\Models\Rating;
+use App\Models\Psychologist;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
@@ -25,12 +26,21 @@ class DashboardController extends Controller
     public function index()
     {
         $user = Auth::user();
-        
-        if ($user->rol === 'psicólogo') {
-            return $this->psychologistDashboard($user);
-        } else {
-            return $this->clientDashboard($user);
-        }
+
+        // Obtener los psicólogos con las mejores calificaciones desde la tabla ratings
+        $topPsychologists = Rating::select('psychologist_id')
+            ->selectRaw('AVG(rating) as avg_rating')
+            ->groupBy('psychologist_id')
+            ->orderByDesc('avg_rating')
+            ->take(3)
+            ->with('psychologist') // Asegúrate de que la relación esté definida en el modelo Rating
+            ->get();
+
+        // Pasar datos adicionales a la vista
+        $nextAppointment = $user->appointments()->where('date', '>=', today())->first();
+        $therapyHours = $user->appointments()->where('status', 'completada')->sum('duration');
+
+        return view('dashboard.client', compact('user', 'topPsychologists', 'nextAppointment', 'therapyHours'));
     }
 
     private function clientDashboard($user)
@@ -40,7 +50,7 @@ class DashboardController extends Controller
             ->orderBy('date')
             ->orderBy('time')
             ->first();
-            
+
         $therapyHours = Appointment::where('patient_id', $user->id)
             ->where('status', 'completada')
             ->sum('duration');

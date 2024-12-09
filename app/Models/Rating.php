@@ -2,17 +2,19 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Rating extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
-        'psychologist_id',
         'user_id',
+        'psychologist_id',
         'rating',
-        'comment'
+        'comment',
     ];
+
+    public function psychologist()
+    {
+        return $this->belongsTo(User::class, 'psychologist_id');
+    }
 }

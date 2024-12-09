@@ -32,19 +32,28 @@
                                     <i class="fas fa-calendar-plus"></i> Agendar Cita
                                 </a>
                             </div>
-                            <form action="{{ route('submit.rating') }}" method="POST" class="rating-form">
+
+                            <!-- Formulario de Calificación -->
+                             <form action="{{ route('submit.rating') }}" method="POST" class="rating-form">
                                 @csrf
                                 <input type="hidden" name="psychologist_id" value="{{ $psychologist->id }}">
                                 <div class="rating-stars">
-                                    @for($i = 1; $i <= 5; $i++)
-                                        <input type="radio" name="rating" value="{{ $i }}" id="star{{ $i }}" required>
-                                        <label for="star{{ $i }}">
-                                            <i class="fas fa-star"></i>
-                                        </label>
+                                    <!-- Ciclo para las estrellas -->
+                                     @for($i = 5; $i >= 1; $i--)
+                                     <input type="radio" name="rating" value="{{ $i }}" id="star{{ $psychologist->id }}-{{ $i }}" required>
+                                     <label for="star{{ $psychologist->id }}-{{ $i }}">
+                                        <i class="fas fa-star"></i>
+                                    </label>
                                     @endfor
                                 </div>
-                                <button type="submit" class="btn btn-secondary">Calificar</button>
+                                <!-- Comentario opcional -->
+                                 <textarea name="comment" placeholder="Deja un comentario (opcional)" rows="2" maxlength="500"></textarea>
+                                 <!-- Botón para enviar la calificación -->
+                                  <button type="submit" class="btn btn-secondary">
+                                    <i class="fas fa-upload"></i> Enviar Calificación
+                                </button>
                             </form>
+
                         </div>
                     </div>
                 @empty
