@@ -23,6 +23,11 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    public function hasRole($role)
+    {
+        return $this->rol === $role;
+    }
+
     public function patient()
     {
         return $this->hasOne(Patient::class);

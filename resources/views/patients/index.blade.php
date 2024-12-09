@@ -18,18 +18,18 @@
                 </a>
             </div>
 
-            @if($patients->isEmpty())
+            @if(isset($activePatients) && $activePatients->isEmpty())
                 <div class="empty-state">
                     <i class="fas fa-user-friends"></i>
                     <p>No tienes pacientes registrados.</p>
                 </div>
             @else
                 <div class="patients-grid">
-                    @foreach($patients as $patient)
+                    @foreach($activePatients as $patient)
                         <div class="patient-card">
                             <div class="patient-info">
                                 <h3>{{ $patient->user->nombre }} {{ $patient->user->apellido }}</h3>
-                                <p class="status {{ $patient->status }}">{{ ucfirst($patient->status) }}</p>
+                                <p class="status">{{ ucfirst($patient->status) }}</p>
                             </div>
                         </div>
                     @endforeach

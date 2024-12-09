@@ -80,7 +80,7 @@ Route::middleware('auth')->group(function () {
     // Rutas para citas (appointments)
     Route::prefix('appointments')->name('appointments.')->group(function () {
         Route::get('/', [AppointmentController::class, 'index'])->name('index');
-        Route::get('/create', [AppointmentController::class, 'create'])->name('create');
+        Route::get('/create/{psychologistId}', [AppointmentController::class, 'create'])->name('create');
         Route::post('/', [AppointmentController::class, 'store'])->name('store');
         Route::get('/{appointment}', [AppointmentController::class, 'show'])->name('show');
         Route::get('/{appointment}/edit', [AppointmentController::class, 'edit'])->name('edit');
@@ -198,3 +198,10 @@ Route::middleware(['auth', 'role:psicólogo'])->group(function () {
 });
 
 Route::post('/submit-rating', [RatingController::class, 'store'])->name('submit.rating');
+
+// Ruta para crear una nueva cita
+Route::get('/appointments/create/{psychologistId}', [AppointmentController::class, 'create'])->name('appointments.create');
+
+Route::get('/patients', [PatientController::class, 'index'])->name('patients.index');
+Route::post('/appointments', [PatientController::class, 'createAppointment'])->name('appointments.store');
+Route::get('/my-appointments', [PatientController::class, 'myAppointments'])->name('appointments.my');

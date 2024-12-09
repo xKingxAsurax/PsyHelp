@@ -14,7 +14,7 @@
             <div class="page-header">
                 <h1><i class="fas fa-calendar"></i> Mis Citas</h1>
                 <div class="header-buttons">
-                    <a href="{{ route('appointments.create') }}" class="btn btn-primary">
+                    <a href="{{ route('appointments.create', ['psychologistId' => $psychologist->id]) }}" class="btn btn-primary">
                         <i class="fas fa-plus"></i> Nueva Cita
                     </a>
                     <a href="{{ route('dashboard') }}" class="btn btn-outline">
@@ -27,7 +27,7 @@
                 <div class="empty-state">
                     <i class="fas fa-calendar-times"></i>
                     <p>No tienes citas programadas.</p>
-                    <a href="{{ route('appointments.create') }}" class="btn btn-primary">
+                    <a href="{{ route('appointments.create', ['psychologistId' => $psychologist->id]) }}" class="btn btn-primary">
                         Programa tu primera cita
                     </a>
                 </div>

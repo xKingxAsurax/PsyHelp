@@ -35,7 +35,7 @@
                     <i class="fas fa-home"></i>
                     <span>Inicio</span>
                 </a>
-                <a href="{{ route('agenda.index') }}" class="nav-link {{ request()->routeIs('appointments.*') ? 'active' : '' }}">
+                <a href="{{ route('agenda.index') }}" class="nav-link {{ request()->routeIs('appointments.index') ? 'active' : '' }}">
                     <i class="fas fa-calendar-alt"></i>
                     <span>Agenda</span>
                 </a>

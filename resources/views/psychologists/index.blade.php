@@ -28,7 +28,7 @@
                             <h3>Dr. {{ $psychologist->nombre }} {{ $psychologist->apellido }}</h3>
                             <p class="specialty">Psicología Clínica</p>
                             <div class="psychologist-actions">
-                                <a href="{{ route('appointments.create', ['psychologist' => $psychologist->id]) }}" class="btn btn-primary">
+                                <a href="{{ route('appointments.create', ['psychologistId' => $psychologist->id]) }}" class="btn btn-primary">
                                     <i class="fas fa-calendar-plus"></i> Agendar Cita
                                 </a>
                             </div>

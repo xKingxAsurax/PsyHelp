@@ -23,71 +23,47 @@
             <div class="appointment-form-container">
                 <form class="appointment-form" action="{{ route('appointments.store') }}" method="POST">
                     @csrf
-                    <input type="hidden" name="duration" value="60">
-
-                    @if ($errors->any())
-                        <div class="alert alert-danger">
-                            <ul>
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-
+                    
                     <div class="form-group">
-                        <label for="psychologist_id">
-                            <i class="fas fa-user-md"></i> Seleccionar Psicólogo
-                        </label>
-                        <select name="psychologist_id" id="psychologist_id" required>
+                        <label for="psychologist_id">Psicólogo:</label>
+                        <select name="psychologist_id" class="form-control" required>
                             <option value="">Seleccione un psicólogo</option>
                             @foreach($psychologists as $psychologist)
-                                <option value="{{ $psychologist->id }}">
-                                    Dr(a). {{ $psychologist->nombre }} {{ $psychologist->apellido }}
-                                </option>
+                                <option value="{{ $psychologist->id }}">{{ $psychologist->nombre }} {{ $psychologist->apellido }}</option>
                             @endforeach
                         </select>
                     </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="date">
-                                <i class="fas fa-calendar"></i> Fecha
-                            </label>
-                            <input type="date" id="date" name="date" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="time">
-                                <i class="fas fa-clock"></i> Hora
-                            </label>
-                            <input type="time" id="time" name="time" required>
-                        </div>
-                    </div>
-
+                    
                     <div class="form-group">
-                        <label for="type">
-                            <i class="fas fa-tag"></i> Tipo de Consulta
-                        </label>
-                        <select name="type" id="type" required>
-                            <option value="primera_vez">Primera Vez</option>
+                        <label for="date">Fecha:</label>
+                        <input type="date" name="date" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="time">Hora:</label>
+                        <input type="time" name="time" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="duration">Duración (minutos):</label>
+                        <input type="number" name="duration" class="form-control" min="30" max="120" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="type">Tipo de cita:</label>
+                        <select name="type" class="form-control" required>
+                            <option value="primera_vez">Primera vez</option>
                             <option value="seguimiento">Seguimiento</option>
                             <option value="emergencia">Emergencia</option>
                         </select>
                     </div>
-
+                    
                     <div class="form-group">
-                        <label for="notes">
-                            <i class="fas fa-comment-medical"></i> Notas Adicionales
-                        </label>
-                        <textarea name="notes" id="notes" rows="4" placeholder="Describe brevemente el motivo de tu consulta..."></textarea>
+                        <label for="notes">Notas:</label>
+                        <textarea name="notes" class="form-control" rows="4"></textarea>
                     </div>
-
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-check"></i> Confirmar Cita
-                        </button>
-                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Programar Cita</button>
                 </form>
             </div>
         </main>

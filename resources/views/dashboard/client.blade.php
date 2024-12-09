@@ -44,17 +44,17 @@
                     <i class="fas fa-user-md"></i>
                     <span>Buscar Psicólogo</span>
                 </a>
-                <a href="{{ route('appointments.create') }}" class="btn btn-new">
+                <a href="{{ isset($psychologist) ? route('appointments.create', ['psychologistId' => $psychologist->id]) : '#' }}" class="btn btn-new" {{ !isset($psychologist) ? 'disabled' : '' }}>
                     <i class="fas fa-plus-circle"></i>
                     Agendar Nueva Cita
                 </a>
             </nav>
 
             <div class="emergency-button">
-                <button id="emergency-button" class="btn btn-emergency">
+                <a href="{{ route('emergency') }}" class="btn btn-emergency">
                     <i class="fas fa-exclamation-circle"></i>
                     <span>Ayuda de Emergencia</span>
-                </button>
+                </a>
             </div>
         </aside>
 
@@ -133,7 +133,7 @@
 
                 <!-- Acciones Rápidas -->
                 <div class="quick-actions">
-                    <a href="{{ route('appointments.create') }}" class="btn btn-new">
+                    <a href="{{ isset($psychologist) ? route('appointments.create', ['psychologistId' => $psychologist->id]) : '#' }}" class="btn btn-new" {{ !isset($psychologist) ? 'disabled' : '' }}>
                         <i class="fas fa-plus-circle"></i>
                         Agendar Nueva Cita
                     </a>

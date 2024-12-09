@@ -9,6 +9,7 @@ use App\Models\Patient;
 use App\Models\Rating;
 use App\Models\Psychologist;
 use Carbon\Carbon;
+use App\Models\User;
 
 class DashboardController extends Controller
 {
@@ -27,20 +28,13 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        // Obtener los psicólogos con las mejores calificaciones desde la tabla ratings
-        $topPsychologists = Rating::select('psychologist_id')
-            ->selectRaw('AVG(rating) as avg_rating')
-            ->groupBy('psychologist_id')
-            ->orderByDesc('avg_rating')
-            ->take(3)
-            ->with('psychologist') // Asegúrate de que la relación esté definida en el modelo Rating
-            ->get();
+        if ($user->rol === 'psicólogo') {
+            return $this->psychologistDashboard($user);
+        } elseif ($user->rol === 'cliente') {
+            return $this->clientDashboard($user);
+        }
 
-        // Pasar datos adicionales a la vista
-        $nextAppointment = $user->appointments()->where('date', '>=', today())->first();
-        $therapyHours = $user->appointments()->where('status', 'completada')->sum('duration');
-
-        return view('dashboard.client', compact('user', 'topPsychologists', 'nextAppointment', 'therapyHours'));
+        return redirect()->route('login')->with('error', 'Acceso no autorizado.');
     }
 
     private function clientDashboard($user)
@@ -55,7 +49,10 @@ class DashboardController extends Controller
             ->where('status', 'completada')
             ->sum('duration');
 
-        return view('dashboard.client', compact('user', 'nextAppointment', 'therapyHours'));
+        // Obtener un psicólogo específico (puedes ajustar esta lógica según tus necesidades)
+        $psychologist = User::where('rol', 'psicólogo')->first(); // O cualquier lógica que necesites
+
+        return view('dashboard.client', compact('user', 'nextAppointment', 'therapyHours', 'psychologist'));
     }
 
     private function psychologistDashboard($user)
@@ -69,7 +66,7 @@ class DashboardController extends Controller
         $activePatients = Patient::whereHas('appointments', function($query) use ($user) {
             $query->where('psychologist_id', $user->id)
                 ->where('status', 'programada');
-        })->count();
+        })->with('user')->get();
 
         // Calificación promedio
         $rating = Rating::where('psychologist_id', $user->id)

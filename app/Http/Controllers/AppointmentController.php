@@ -26,54 +26,35 @@ class AppointmentController extends Controller
 
     public function create()
     {
-        $psychologists = User::where('rol', 'psicólogo')->get();
-        $types = [
-            ['id' => 'primera_vez', 'nombre' => 'Primera Consulta'],
-            ['id' => 'seguimiento', 'nombre' => 'Seguimiento'],
-            ['id' => 'emergencia', 'nombre' => 'Emergencia']
-        ];
-        
-        return view('appointments.create', compact('psychologists', 'types'));
+        $psychologists = User::where('rol', 'psicólogo')->get(); // Obtener todos los psicólogos
+        return view('appointments.create', compact('psychologists'));
     }
 
     public function store(Request $request)
     {
-        try {
-            \Log::info('Datos recibidos:', $request->all());
+        $validated = $request->validate([
+            'psychologist_id' => 'required|exists:users,id',
+            'date' => 'required|date|after:today',
+            'time' => 'required',
+            'duration' => 'required|integer|min:30|max:120',
+            'type' => 'required|in:primera_vez,seguimiento,emergencia',
+            'notes' => 'nullable|string|max:500'
+        ]);
 
-            $validated = $request->validate([
-                'psychologist_id' => 'required|exists:users,id',
-                'date' => 'required|date|after:today',
-                'time' => 'required',
-                'duration' => 'required|integer|min:30|max:120',
-                'type' => 'required|in:primera_vez,seguimiento,emergencia',
-                'notes' => 'nullable|string|max:500'
-            ]);
+        $appointment = Appointment::create([
+            'patient_id' => Auth::id(),
+            'psychologist_id' => $validated['psychologist_id'],
+            'date' => $validated['date'],
+            'time' => $validated['time'],
+            'duration' => $validated['duration'],
+            'type' => $validated['type'],
+            'notes' => $validated['notes'] ?? null,
+            'status' => 'programada'
+        ]);
 
-            $appointment = Appointment::create([
-                'patient_id' => Auth::id(),
-                'psychologist_id' => $validated['psychologist_id'],
-                'date' => $validated['date'],
-                'time' => $validated['time'],
-                'duration' => $validated['duration'],
-                'type' => $validated['type'],
-                'notes' => $validated['notes'] ?? null,
-                'status' => 'programada'
-            ]);
-
-            \Log::info('Cita creada:', $appointment->toArray());
-
-            return redirect()
-                ->route('appointments.show', $appointment)
-                ->with('success', 'Cita programada exitosamente');
-        } catch (\Exception $e) {
-            \Log::error('Error al crear cita: ' . $e->getMessage());
-            \Log::error('Stack trace: ' . $e->getTraceAsString());
-            
-            return back()
-                ->withInput()
-                ->withErrors(['error' => 'Error al programar la cita: ' . $e->getMessage()]);
-        }
+        return redirect()
+            ->route('appointments.show', $appointment)
+            ->with('success', 'Cita programada exitosamente');
     }
 
     public function show(Appointment $appointment)
@@ -86,8 +67,11 @@ class AppointmentController extends Controller
         $appointments = Appointment::where('patient_id', Auth::id())
             ->orderBy('date', 'asc')
             ->get();
-            
-        return view('appointments.my', compact('appointments'));
+
+        // Obtener un psicólogo específico (puedes ajustar esta lógica según tus necesidades)
+        $psychologist = User::where('rol', 'psicólogo')->first(); // O cualquier lógica que necesites
+
+        return view('appointments.my', compact('appointments', 'psychologist'));
     }
 
     public function destroy(Appointment $appointment)

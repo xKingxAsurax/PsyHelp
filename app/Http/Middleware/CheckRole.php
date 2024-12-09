@@ -3,14 +3,14 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CheckRole
 {
-    public function handle(Request $request, Closure $next, $role)
+    public function handle($request, Closure $next, $role)
     {
-        if (!$request->user() || $request->user()->rol !== $role) {
-            return redirect()->route('dashboard');
+        if (!Auth::user() || !Auth::user()->hasRole($role)) {
+            return redirect('/home'); // Redirige si no tiene el rol
         }
 
         return $next($request);
